@@ -1,0 +1,22 @@
+# Rust
+/target
+
+# Node / Nuxt (frontend)
+node_modules
+.nuxt
+.output
+dist
+
+# Env
+.env
+.env.*
+!.env.example
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea
+*.swp
+*.swo
