@@ -5,8 +5,9 @@ use tokio::{
 use tokio_rustls::{client::TlsStream, rustls};
 
 use crate::{
+    adapters::services::irc_command::IrcCommand,
     applications::ports::{irc_connection::IrcConnection, irc_connector::IrcConnector},
-    domain::{channel::Channel, irc_command::IrcCommand, message::Message},
+    domain::{channel::Channel, message::Message},
 };
 
 const TWITCH_IRC_ADDR: &str = "irc.chat.twitch.tv";
@@ -20,7 +21,7 @@ pub struct TwitchIrcConnection {
 
 impl IrcConnector for TwitchIrcConnector {
     type Connection = TwitchIrcConnection;
-    async fn connect(_channel: &Channel) -> Result<Self::Connection, std::io::Error> {
+    async fn get_client() -> Result<Self::Connection, std::io::Error> {
         let root_store =
             rustls::RootCertStore::from_iter(webpki_roots::TLS_SERVER_ROOTS.iter().cloned());
         let config = rustls::ClientConfig::builder()
@@ -39,14 +40,14 @@ impl IrcConnector for TwitchIrcConnector {
         };
 
         connection
-            .send(&IrcCommand::Nick(ANONYMOUS_NICK.to_owned()))
+            .send(&IrcCommand::Nick(ANONYMOUS_NICK.into()))
             .await?;
 
         Ok(connection)
     }
 }
 
-impl IrcConnection for TwitchIrcConnection {
+impl TwitchIrcConnection {
     async fn send(&mut self, command: &IrcCommand) -> Result<(), std::io::Error> {
         let raw = match command {
             IrcCommand::Nick(name) => format!("NICK {}\r\n", name),
@@ -58,6 +59,14 @@ impl IrcConnection for TwitchIrcConnection {
         };
 
         self.stream.get_mut().write_all(raw.as_bytes()).await?;
+
+        Ok(())
+    }
+}
+
+impl IrcConnection for TwitchIrcConnection {
+    async fn join_channel(&mut self, channel: Channel) -> Result<(), std::io::Error> {
+        self.send(&IrcCommand::Join(channel)).await?;
 
         Ok(())
     }

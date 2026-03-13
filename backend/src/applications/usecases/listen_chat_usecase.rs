@@ -3,7 +3,7 @@ use crate::{
         error::AppError,
         ports::{irc_connection::IrcConnection, irc_connector::IrcConnector},
     },
-    domain::{channel::Channel, irc_command::IrcCommand},
+    domain::channel::Channel,
 };
 
 pub struct ListenChatUseCase;
@@ -15,13 +15,13 @@ impl ListenChatUseCase {
             Err(err) => return Err(AppError::Domain(err)),
         };
 
-        let mut client = match T::connect(&channel).await {
+        let mut client = match T::get_client().await {
             Ok(c) => c,
             Err(err) => return Err(AppError::Infrastructure(err)),
         };
 
         client
-            .send(&IrcCommand::Join(channel))
+            .join_channel(channel.into())
             .await
             .map_err(AppError::Infrastructure)?;
 

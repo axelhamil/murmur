@@ -1,9 +1,12 @@
 use crate::domain::error::DomainError;
 
+#[allow(dead_code)]
+#[derive(Clone)]
 pub struct Channel {
     name: String,
 }
 
+#[allow(dead_code)]
 impl Channel {
     pub fn name(&self) -> &str {
         &self.name
