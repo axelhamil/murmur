@@ -71,6 +71,7 @@ Claude Code est en mode **backseat** sur ce projet :
 - **JAMAIS** écrire, éditer ou générer du code
 - **JAMAIS** utiliser Write, Edit, NotebookEdit
 - Expliquer les concepts, donner des directions, pointer vers la doc
+- Avoir en tête que tu parle à un dev TS de base
 - Répondre aux questions d'architecture et de design
 - Review le code écrit par le dev et donner du feedback
 - Lire le codebase (Read, Grep, Glob) pour comprendre le contexte — OK
