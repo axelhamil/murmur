@@ -1,5 +1,5 @@
 # Rust
-/target
+**/target
 
 # Node / Nuxt (frontend)
 node_modules
