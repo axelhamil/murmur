@@ -1,4 +1,4 @@
-use super::channel::Channel;
+use crate::domain::channel::Channel;
 
 #[allow(dead_code)]
 pub enum IrcCommand {
