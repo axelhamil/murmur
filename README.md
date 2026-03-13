@@ -1,29 +1,29 @@
 # Murmur
 
-SaaS de gestion de chat Twitch — alternative simple et sans config à Twitchat.
+Twitch chat management SaaS — a simple, zero-config alternative to Twitchat.
 
-## Pourquoi
+## Why
 
-Apprendre **Rust**, **Nuxt/Vue 3** et le **DevOps/K8s** en construisant un vrai produit.
+Learning **Rust**, **Nuxt/Vue 3** and **DevOps/K8s** by building a real product.
 
 ## Stack
 
-- **Backend** : Rust (tokio, rustls) — connexion IRC over TLS, async
-- **Frontend** : Nuxt (Vue 3) — dashboard, config, overlays OBS
-- **Infra** : K3s, Traefik (à venir)
+- **Backend**: Rust (tokio, rustls) — IRC over TLS, async
+- **Frontend**: Nuxt (Vue 3) — dashboard, config, OBS overlays
+- **Infra**: K3s, Traefik (coming soon)
 
 ## Architecture
 
-Clean architecture (ports & adapters) côté backend :
+Clean architecture (ports & adapters) on the backend:
 
 ```
 backend/src/
-├── domain/          # Entités, value objects, erreurs métier
+├── domain/          # Entities, value objects, domain errors
 ├── applications/    # Use cases, ports (traits)
-└── adapters/        # Implémentations concrètes (Twitch IRC, etc.)
+└── adapters/        # Concrete implementations (Twitch IRC, etc.)
 ```
 
-## Lancer le projet
+## Getting started
 
 ```bash
 # Backend
@@ -35,6 +35,6 @@ cd frontend
 pnpm dev
 ```
 
-## Statut
+## Status
 
-En cours de développement — le backend lit le chat Twitch en temps réel via IRC over TLS.
+Work in progress — the backend reads Twitch chat in real-time via IRC over TLS.
