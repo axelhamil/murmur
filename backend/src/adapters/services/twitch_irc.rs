@@ -69,13 +69,13 @@ impl IrcConnection for TwitchIrcConnection {
 
         println!("{}", line);
 
-        return Ok(Message::new(
+        Ok(Message::new(
             "0".to_owned(),
             line,
             "unknow".to_owned(),
             "unknow".to_owned(),
             0,
         )
-        .unwrap());
+        .unwrap())
     }
 }
