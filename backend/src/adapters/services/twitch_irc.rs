@@ -67,8 +67,6 @@ impl IrcConnection for TwitchIrcConnection {
         let mut line = String::new();
         self.stream.read_line(&mut line).await?;
 
-        println!("{}", line);
-
         Ok(Message::new(
             "0".to_owned(),
             line,
