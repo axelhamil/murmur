@@ -1,14 +1,15 @@
-mod irc;
+use crate::{
+    adapters::services::twitch_irc::TwitchIrcConnector,
+    applications::usecases::listen_chat_usecase::ListenChatUseCase,
+};
+
+mod adapters;
+mod applications;
+mod domain;
 
 #[tokio::main]
 async fn main() {
-    let tls_stream = match irc::connection::connect("").await {
-        Ok(v) => v,
-        Err(e) => {
-            println!("{:?}", e);
-            return;
-        }
-    };
-
-    println!("{}", "Connecté !")
+    if let Err(e) = ListenChatUseCase::execute::<TwitchIrcConnector>("#aymenzer").await {
+        println!("{:?}", e);
+    }
 }
