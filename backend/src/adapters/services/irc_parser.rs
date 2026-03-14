@@ -21,20 +21,17 @@ impl IrcMessage {
         line: &str,
     ) -> Result<(Option<HashMap<String, Option<String>>>, &str), IrcParserError> {
         if line.starts_with("@") {
-            match line.find(" ") {
-                Some(space_index) => {
-                    let tags = line[1..space_index]
-                        .split(";")
-                        .map(|el| match el.split_once("=") {
-                            Some((key, "")) => (key.to_string(), None),
-                            Some((key, val)) => (key.to_string(), Some(val.to_string())),
-                            None => (el.to_string(), None),
-                        });
+            let space_index = line.find(" ").ok_or(IrcParserError::MissingCommand)?;
 
-                    return Ok((Some(tags.collect()), &line[space_index + 1..]));
-                }
-                None => return Err(IrcParserError::MissingCommand),
-            };
+            let tags = line[1..space_index]
+                .split(";")
+                .map(|el| match el.split_once("=") {
+                    Some((key, "")) => (key.to_owned(), None),
+                    Some((key, val)) => (key.to_owned(), Some(val.to_owned())),
+                    None => (el.to_owned(), None),
+                });
+
+            return Ok((Some(tags.collect()), &line[space_index + 1..]));
         };
 
         Ok((None, line))
