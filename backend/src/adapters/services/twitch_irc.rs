@@ -6,7 +6,7 @@ use tokio_rustls::{client::TlsStream, rustls};
 
 use crate::{
     adapters::services::irc_command::IrcCommand,
-    applications::ports::{irc_connection::IrcConnection, irc_connector::IrcConnector},
+    applications::ports::{chat_connection::ChatConnection, chat_connector::ChatConnector},
     domain::{channel::Channel, message::Message},
 };
 
@@ -19,7 +19,7 @@ pub struct TwitchIrcConnection {
     stream: BufReader<TlsStream<TcpStream>>,
 }
 
-impl IrcConnector for TwitchIrcConnector {
+impl ChatConnector for TwitchIrcConnector {
     type Connection = TwitchIrcConnection;
     async fn get_client() -> Result<Self::Connection, std::io::Error> {
         let root_store =
@@ -64,7 +64,7 @@ impl TwitchIrcConnection {
     }
 }
 
-impl IrcConnection for TwitchIrcConnection {
+impl ChatConnection for TwitchIrcConnection {
     async fn join_channel(&mut self, channel: Channel) -> Result<(), std::io::Error> {
         self.send(&IrcCommand::Join(channel)).await?;
 
@@ -72,7 +72,7 @@ impl IrcConnection for TwitchIrcConnection {
     }
 
     // TODO: parser la ligne IRC en vrai Message
-    async fn read_line(&mut self) -> Result<Message, std::io::Error> {
+    async fn next_message(&mut self) -> Result<Message, std::io::Error> {
         let mut line = String::new();
         self.stream.read_line(&mut line).await?;
 

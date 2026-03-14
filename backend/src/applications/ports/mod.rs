@@ -1,2 +1,2 @@
-pub mod irc_connection;
-pub mod irc_connector;
+pub mod chat_connection;
+pub mod chat_connector;

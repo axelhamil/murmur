@@ -1,7 +1,7 @@
 use crate::{
     applications::{
         error::AppError,
-        ports::{irc_connection::IrcConnection, irc_connector::IrcConnector},
+        ports::{chat_connection::ChatConnection, chat_connector::ChatConnector},
     },
     domain::channel::Channel,
 };
@@ -9,7 +9,7 @@ use crate::{
 pub struct ListenChatUseCase;
 
 impl ListenChatUseCase {
-    pub async fn execute<T: IrcConnector>(channel_name: &str) -> Result<(), AppError> {
+    pub async fn execute<T: ChatConnector>(channel_name: &str) -> Result<(), AppError> {
         let channel = match Channel::new(channel_name.to_owned()) {
             Ok(channel) => channel,
             Err(err) => return Err(AppError::Domain(err)),
@@ -26,7 +26,7 @@ impl ListenChatUseCase {
             .map_err(AppError::Infrastructure)?;
 
         loop {
-            match client.read_line().await {
+            match client.next_message().await {
                 Ok(message) => println!("{:?}", message),
                 Err(err) => return Err(AppError::Infrastructure(err)),
             }
