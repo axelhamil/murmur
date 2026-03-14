@@ -27,7 +27,7 @@ impl ListenChatUseCase {
 
         loop {
             match client.next_message().await {
-                Ok(message) => println!("{:?}", message),
+                Ok(message) => println!("{:?}", message.content()),
                 Err(err) => return Err(AppError::Infrastructure(err)),
             }
         }

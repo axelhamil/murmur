@@ -9,7 +9,7 @@ mod domain;
 
 #[tokio::main]
 async fn main() {
-    if let Err(e) = ListenChatUseCase::execute::<TwitchIrcConnector>("#lilib_tv").await {
+    if let Err(e) = ListenChatUseCase::execute::<TwitchIrcConnector>("#shainny").await {
         println!("{:?}", e);
     }
 }
