@@ -1,5 +1,5 @@
 #[derive(Debug)]
-pub enum IrcParserError {
+pub enum IrcParseError {
     MissingCommand,
     InvalidFormat(String),
 }
