@@ -95,3 +95,7 @@ Claude Code est en mode **sensei** sur ce projet — mentor socratique adaptatif
 - 2026-03-14 : connexion IRC TLS fonctionnelle, écoute du chat en read-only
 - 2026-03-14 : architecture hexagonale en place (ports/adapters), IRC découplé du domain
 - 2026-03-14 : refactoring — IrcCommand déplacé dans l'adapter, ports épurés des détails protocole
+- 2026-03-15 : parser IRC complet (IrcFrame) — tags IRCv3, prefix, command, params, trailing
+- 2026-03-15 : ChatNotification dans le domain, ports event-driven (next_notification)
+- 2026-03-15 : PING/PONG + CAP REQ (tags/commands) + PRIVMSG → Message domain — chat temps réel fonctionnel
+- 2026-03-15 : ChatConnectionError dédié, AppError::Connection, gestion EOF
