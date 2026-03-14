@@ -3,7 +3,7 @@ use crate::{
         error::AppError,
         ports::{chat_connection::ChatConnection, chat_connector::ChatConnector},
     },
-    domain::channel::Channel,
+    domain::{channel::Channel, chat_notification::ChatNotification},
 };
 
 pub struct ListenChatUseCase;
@@ -17,18 +17,20 @@ impl ListenChatUseCase {
 
         let mut client = match T::get_client().await {
             Ok(c) => c,
-            Err(err) => return Err(AppError::Infrastructure(err)),
+            Err(err) => return Err(AppError::Connection(err)),
         };
 
         client
             .join_channel(channel.into())
             .await
-            .map_err(AppError::Infrastructure)?;
+            .map_err(AppError::Connection)?;
 
         loop {
-            match client.next_message().await {
-                Ok(message) => println!("{:?}", message.content()),
-                Err(err) => return Err(AppError::Infrastructure(err)),
+            match client.next_notification().await {
+                Ok(ChatNotification::NewMessage(message)) => {
+                    println!("{}: {}", message.author(), message.content())
+                }
+                Err(err) => println!("Error: {:?}", err),
             }
         }
     }
