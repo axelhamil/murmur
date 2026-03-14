@@ -10,20 +10,11 @@ pub struct Message {
 }
 
 impl Message {
-    pub fn id(&self) -> &str {
-        &self.id
-    }
     pub fn content(&self) -> &str {
         &self.content
     }
-    pub fn channel_id(&self) -> &str {
-        &self.channel_id
-    }
     pub fn author(&self) -> &str {
         &self.author
-    }
-    pub fn timestamp(&self) -> u64 {
-        self.timestamp
     }
 
     pub fn new(

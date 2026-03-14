@@ -1,6 +1,13 @@
-use crate::domain::{channel::Channel, message::Message};
+use crate::domain::{channel::Channel, chat_notification::ChatNotification};
+
+#[derive(Debug)]
+pub enum ChatConnectionError {
+    Io(std::io::Error),
+    InvalidData(String),
+    ConnectionClosed,
+}
 
 pub trait ChatConnection: Sized {
-    async fn join_channel(&mut self, channel: Channel) -> Result<(), std::io::Error>;
-    async fn next_message(&mut self) -> Result<Message, std::io::Error>;
+    async fn join_channel(&mut self, channel: Channel) -> Result<(), ChatConnectionError>;
+    async fn next_notification(&mut self) -> Result<ChatNotification, ChatConnectionError>;
 }
