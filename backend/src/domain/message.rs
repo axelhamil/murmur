@@ -1,6 +1,5 @@
 use crate::domain::error::DomainError;
 
-#[allow(dead_code)]
 #[derive(Debug)]
 pub struct Message {
     id: String,
@@ -10,7 +9,6 @@ pub struct Message {
     timestamp: u64,
 }
 
-#[allow(dead_code)]
 impl Message {
     pub fn id(&self) -> &str {
         &self.id
