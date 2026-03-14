@@ -4,7 +4,9 @@ SaaS de gestion de chat Twitch — alternative à Twitchat, orientée simplicit�
 
 ## Positionnement
 
-- **Cible** : streamers (50-5000 viewers), pas techniques, qui veulent un outil qui marche en 1 clic
+- **Cible** : streamers + viewers
+  - Streamers (50-5000 viewers) : dashboard, bot, config, overlays — pas techniques, veulent un outil qui marche en 1 clic
+  - Viewers : chat enrichi indépendant (meilleure UX que le chat Twitch natif, redimensionnable, customisable) — utilisable sur n'importe quel stream, même si le streamer n'utilise pas Murmur
 - **Avantage vs Twitchat** : zéro setup (pas d'app Twitch à créer, pas de self-host), bot 24/7, UX simple
 - **Modèle** : freemium (tiers à définir quand le MVP tourne)
 
@@ -62,6 +64,55 @@ SaaS de gestion de chat Twitch — alternative à Twitchat, orientée simplicit�
 - OAuth Twitch : authorization code flow (le serveur gère le callback)
 - Overlays OBS : URL à coller dans OBS, servies par le backend
 - Scaling : un process Rust multiplexe N connexions chat (async tokio), scale horizontalement en pods K3s
+- Multiplexing WebSocket : une seule connexion IRC par channel, broadcast vers N viewers/streamers connectés en WebSocket — jamais de connexion IRC dupliquée pour le même channel
+
+## DevOps
+
+### Philosophie
+
+Le dev a de l'expérience Docker/Compose mais découvre Kubernetes. Approche progressive : d'abord ça tourne en local, puis en container, puis en cluster.
+
+### Phase 1 — Dev local (actuel)
+
+- Backend : `cargo run`
+- Frontend : `npm run dev`
+- Pas de container, pas d'orchestration
+- Postgres et Redis en Docker Compose pour les données
+
+### Phase 2 — Containerisation
+
+- Dockerfile multi-stage pour le backend Rust (build + runtime minimal)
+- Dockerfile pour le frontend Nuxt
+- Docker Compose qui orchestre tout : backend, frontend, Postgres, Redis
+- Variables d'env pour la config (pas de secrets hardcodés)
+
+### Phase 3 — CI/CD
+
+- GitHub Actions : build, test, push images vers un registry (GHCR ou Docker Hub)
+- Lint + cargo clippy dans la CI
+- Build d'images multi-arch (amd64 + arm64) si RPi utilisé
+
+### Phase 4 — K3s en prod
+
+- **K3s** sur VPS (2-4 Go RAM minimum) — Kubernetes léger, Traefik inclus comme ingress
+- Manifests Kubernetes (Deployments, Services, Ingress) ou Helm charts
+- **Traefik** gère le TLS (Let's Encrypt auto) et le routing
+- **Postgres** : soit en pod K3s (simple), soit managed (plus fiable)
+- **Redis** : en pod K3s suffit pour le MVP
+- Un seul pod backend au départ, scale horizontal plus tard
+
+### Phase 5 — Scale et monitoring (post-MVP)
+
+- **KEDA** : scale-to-zero quand aucun streamer connecté (économie VPS)
+- Monitoring : Prometheus + Grafana (métriques connexions, messages/s, latence)
+- Logs structurés (tracing crate côté Rust)
+- Alerting sur les déconnexions IRC
+
+### Contraintes
+
+- Le backend Rust est un **process long-running** — pas du serverless. Pas de cold start, connexions IRC persistantes.
+- Un pod backend gère N streamers en async (tokio). Scale horizontal = plusieurs pods, avec Redis pour partager le state.
+- Le RPi 3B+ (1 Go RAM) est trop juste pour K3s — préférer un VPS pour la prod, le RPi pour expérimenter Docker Compose.
 
 ## Objectifs d'apprentissage
 
