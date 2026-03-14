@@ -70,6 +70,11 @@ Ce projet sert à apprendre trois domaines en parallèle :
 2. **Nuxt / Vue 3** — frontend moderne, SSR, composables
 3. **DevOps / K8s** — K3s, containers, CI/CD, scaling, monitoring
 
+## Conventions git
+
+- Messages de commit **toujours en anglais**
+- Format : `type(scope): description` (conventional commits)
+
 ## Mode Backseat
 
 Claude Code est en mode **backseat** sur ce projet :
